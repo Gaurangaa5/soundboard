@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Show Soundboard</title>
+
+<style>
+@font-face {
+    font-family: 'LTA-Identity';
+    src: url('LTA-Identity.ttf') format('truetype');
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'LTA-Identity',Arial,sans-serif;
+    background:#f5f5f5;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.panel{
+    background:white;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+    font-size:38px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,220px);
+    gap:15px;
+}
+
+button{
+    height:65px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    font-size:18px;
+    font-family:'LTA-Identity',Arial,sans-serif;
+    background:#4CAF50;
+    color:white;
+    transition:.25s;
+    box-shadow:0 5px 10px rgba(0,0,0,.2);
+}
+
+button:hover{
+    background:#45a049;
+    transform:translateY(-2px);
+}
+
+.playing{
+    box-shadow:
+        0 0 15px gold,
+        0 0 30px gold,
+        0 0 50px gold;
+}
+
+/* BIG CHEATING BUTTON */
+
+.cheat{
+    grid-column:span 2;
+    height:110px;
+    font-size:32px;
+    font-weight:bold;
+    background:#c40000;
+    animation:flash 0.8s infinite;
+}
+
+.cheat:hover{
+    background:#ff0000;
+}
+
+@keyframes flash{
+
+0%{
+background:#a00000;
+box-shadow:0 0 15px red;
+}
+
+50%{
+background:#ff0000;
+box-shadow:0 0 45px red;
+}
+
+100%{
+background:#a00000;
+box-shadow:0 0 15px red;
+}
+
+}
+
+/* STOP BUTTON */
+
+.stop{
+    margin-top:20px;
+    width:100%;
+    background:#333;
+}
+
+.stop:hover{
+    background:#111;
+}
+
+.footer{
+    text-align:center;
+    margin-top:15px;
+    color:#666;
+    font-size:14px;
+}
+
+@media(max-width:600px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.cheat{
+grid-column:span 1;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+
+<h1>🎮 Game Show Soundboard</h1>
+
+<div class="grid">
+
+<button onclick="playSound(this,'1-timer.mp3')">
+⏱ Timer
+</button>
+
+<button onclick="playSound(this,'2-next question.mp3')">
+➡️ Next Question
+</button>
+
+<button onclick="playSound(this,'4-correct.mp3')">
+✅ Correct Answer
+</button>
+
+<button onclick="playSound(this,'5-game intro.mp3')">
+🎬 Game Intro
+</button>
+
+<button onclick="playSound(this,'6-Suspense.mp3')">
+😱 Suspense
+</button>
+
+<button onclick="playSound(this,'7-Points.mp3')">
+💰 Add Points
+</button>
+
+<button onclick="playSound(this,'8-Air horn buzzer.mp3')">
+📣 Air Horn
+</button>
+
+<!-- BIG RED BUTTON -->
+
+<button class="cheat" onclick="startCheatingAlarm()">
+🚨 CHEATING DETECTED 🚨
+</button>
+
+</div>
+
+<button class="stop" onclick="stopAudio()">
+⏹ STOP ALL AUDIO
+</button>
+
+<div class="footer">
+Keyboard shortcuts: 1–7 • Space = Stop
+</div>
+
+</div>
+
+<script>
+
+let currentAudio=null;
+let currentButton=null;
+let cheatingAlarm=null;
+
+function stopAudio(){
+
+    if(currentAudio){
+        currentAudio.pause();
+        currentAudio.currentTime=0;
+        currentAudio=null;
+    }
+
+    if(cheatingAlarm){
+        cheatingAlarm.pause();
+        cheatingAlarm.currentTime=0;
+        cheatingAlarm=null;
+    }
+
+    if(currentButton){
+        currentButton.classList.remove("playing");
+        currentButton=null;
+    }
+
+}
+
+function playSound(button,file){
+
+    stopAudio();
+
+    currentAudio=new Audio(file);
+
+    currentButton=button;
+
+    button.classList.add("playing");
+
+    currentAudio.play();
+
+    currentAudio.onended=function(){
+
+        if(currentButton){
+            currentButton.classList.remove("playing");
+            currentButton=null;
+        }
+
+    };
+
+}
+
+function startCheatingAlarm(){
+
+    stopAudio();
+
+    cheatingAlarm=new Audio("3-wrong ans.mp3");
+
+    cheatingAlarm.loop=true;
+
+    cheatingAlarm.play();
+
+}
+
+document.addEventListener("keydown",function(e){
+
+    switch(e.key){
+
+        case "1":
+            document.querySelectorAll(".grid button")[0].click();
+            break;
+
+        case "2":
+            document.querySelectorAll(".grid button")[1].click();
+            break;
+
+        case "3":
+            document.querySelectorAll(".grid button")[2].click();
+            break;
+
+        case "4":
+            document.querySelectorAll(".grid button")[3].click();
+            break;
+
+        case "5":
+            document.querySelectorAll(".grid button")[4].click();
+            break;
+
+        case "6":
+            document.querySelectorAll(".grid button")[5].click();
+            break;
+
+        case "7":
+            document.querySelectorAll(".grid button")[6].click();
+            break;
+
+        case " ":
+            e.preventDefault();
+            stopAudio();
+            break;
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
