@@ -78,7 +78,7 @@ button:hover{
     font-size:32px;
     font-weight:bold;
     background:#c40000;
-    animation:flash 0.8s infinite;
+    animation:flash .8s infinite;
 }
 
 .cheat:hover{
@@ -153,6 +153,10 @@ grid-column:span 1;
 ➡️ Next Question
 </button>
 
+<button onclick="playSound(this,'3-wrong ans.mp3')">
+❌ Wrong Answer
+</button>
+
 <button onclick="playSound(this,'4-correct.mp3')">
 ✅ Correct Answer
 </button>
@@ -173,7 +177,7 @@ grid-column:span 1;
 📣 Air Horn
 </button>
 
-<!-- BIG RED BUTTON -->
+<!-- BIG RED LOOP BUTTON -->
 
 <button class="cheat" onclick="startCheatingAlarm()">
 🚨 CHEATING DETECTED 🚨
@@ -186,34 +190,34 @@ grid-column:span 1;
 </button>
 
 <div class="footer">
-Keyboard shortcuts: 1–7 • Space = Stop
+Keyboard Shortcuts: 1–8 • Space = Stop
 </div>
 
 </div>
 
 <script>
 
-let currentAudio=null;
-let currentButton=null;
-let cheatingAlarm=null;
+let currentAudio = null;
+let currentButton = null;
+let cheatingAlarm = null;
 
 function stopAudio(){
 
     if(currentAudio){
         currentAudio.pause();
-        currentAudio.currentTime=0;
-        currentAudio=null;
+        currentAudio.currentTime = 0;
+        currentAudio = null;
     }
 
     if(cheatingAlarm){
         cheatingAlarm.pause();
-        cheatingAlarm.currentTime=0;
-        cheatingAlarm=null;
+        cheatingAlarm.currentTime = 0;
+        cheatingAlarm = null;
     }
 
     if(currentButton){
         currentButton.classList.remove("playing");
-        currentButton=null;
+        currentButton = null;
     }
 
 }
@@ -222,19 +226,19 @@ function playSound(button,file){
 
     stopAudio();
 
-    currentAudio=new Audio(file);
+    currentAudio = new Audio(file);
 
-    currentButton=button;
+    currentButton = button;
 
     button.classList.add("playing");
 
     currentAudio.play();
 
-    currentAudio.onended=function(){
+    currentAudio.onended = function(){
 
         if(currentButton){
             currentButton.classList.remove("playing");
-            currentButton=null;
+            currentButton = null;
         }
 
     };
@@ -245,9 +249,10 @@ function startCheatingAlarm(){
 
     stopAudio();
 
-    cheatingAlarm=new Audio("3-wrong ans.mp3");
+    cheatingAlarm = new Audio("3-wrong ans.mp3");
+    cheatingAlarm.loop = true;
 
-    cheatingAlarm.loop=true;
+    document.querySelector(".cheat").classList.add("playing");
 
     cheatingAlarm.play();
 
@@ -255,44 +260,58 @@ function startCheatingAlarm(){
 
 document.addEventListener("keydown",function(e){
 
+    const buttons=document.querySelectorAll(".grid button");
+
     switch(e.key){
 
         case "1":
-            document.querySelectorAll(".grid button")[0].click();
+            buttons[0].click();
             break;
 
         case "2":
-            document.querySelectorAll(".grid button")[1].click();
+            buttons[1].click();
             break;
 
         case "3":
-            document.querySelectorAll(".grid button")[2].click();
+            buttons[2].click();
             break;
 
         case "4":
-            document.querySelectorAll(".grid button")[3].click();
+            buttons[3].click();
             break;
 
         case "5":
-            document.querySelectorAll(".grid button")[4].click();
+            buttons[4].click();
             break;
 
         case "6":
-            document.querySelectorAll(".grid button")[5].click();
+            buttons[5].click();
             break;
 
         case "7":
-            document.querySelectorAll(".grid button")[6].click();
+            buttons[6].click();
+            break;
+
+        case "8":
+            buttons[7].click();
             break;
 
         case " ":
             e.preventDefault();
             stopAudio();
+            document.querySelector(".cheat").classList.remove("playing");
             break;
 
     }
 
 });
+
+// Remove glow from cheat button whenever audio is stopped
+const oldStopAudio = stopAudio;
+stopAudio = function(){
+    oldStopAudio();
+    document.querySelector(".cheat").classList.remove("playing");
+};
 
 </script>
 
